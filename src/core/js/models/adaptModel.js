@@ -58,7 +58,9 @@ define([
             _.defer(function() {
                 if (this._children) {
                     this.checkCompletionStatus();
-
+    
+                    this.setupChildrenAvailability();
+                    
                     this.checkInteractionCompletionStatus();
 
                     this.checkLocking();
@@ -69,7 +71,18 @@ define([
             }.bind(this));
 
         },
+        
+        setupChildrenAvailability: function () {
+            if (!this.get('_isAvailable')) {
+                const children = this.getChildren();
 
+                children.models.forEach(child => {
+                    child.set('_isAvailable', false);
+                    child.set('_isOptional',true);
+                });
+            }
+        },
+        
         setupTrackables: function() {
 
             // Limit state trigger calls and make state change callbacks batched-asynchronous
